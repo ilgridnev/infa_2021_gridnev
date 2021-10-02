@@ -16,7 +16,10 @@ def ghost(a, b, c, d, side):  # призрак side выбирает напра�
                          [2 * i, 10 * j], [2 * i, 7 * j], [3 * i, 9 * j], [3 * i, 8 * j], [4 * i, 10 * j],
                          [4 * i, 8 * j], [5 * i, 9 * j], [5 * i, 8 * j], [6 * i, 10 * j], [5 * i, 3 * j]])
     if side == 1:
-        pygame.draw.ellipse(place, (230, 0, 0, 200), (7 * i / 4, 2 * j, 9 * i / 4, 3 * j))
+        pygame.draw.ellipse(place, (230, 0, 0, 200), (7 * i / 4, 2 * j, i / 2, j))
+        pygame.draw.ellipse(place, (0, 0, 0, 200), (7 * i / 4, 2 * j, i / 2, j), 2)
+        pygame.draw.ellipse(place, (230, 0, 0, 200), (11 * i / 4, 2 * j, i / 2, j))
+        pygame.draw.ellipse(place, (0, 0, 0, 200), (11 * i / 4, 2 * j, i / 2, j), 2)
 
     screen.blit(place, (a, b))
 
