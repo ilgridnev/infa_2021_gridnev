@@ -6,16 +6,16 @@ FPS = 30
 screen = pygame.display.set_mode((400, 600))
 
 
-def ghost(a, b, c, d, side):  # призрак side выбирает направление взгляда 1 налево, 2 направо
+def ghost(a, b, c, d, side):  # призрак side выбирает направление взгляда :1 налево, 0 направо
     i = c / 6
     j = d / 10
-    place = pygame.Surface((c, d), pygame.SRCALPHA)
-    pygame.draw.ellipse(place, (0, 200, 100, 160), (i, 0, 4 * i, 6 * j))
+    place = pygame.Surface((c, d), pygame.SRCALPHA)  # создаем полупрозрачную область для каждого призрака
+    pygame.draw.ellipse(place, (0, 200, 100, 160), (i, 0, 4 * i, 6 * j))  # голова
     pygame.draw.polygon(place, (0, 200, 100, 160),
                         [[i, 3 * j], [0, 9 * j], [i, 8 * j],
                          [2 * i, 10 * j], [2 * i, 7 * j], [3 * i, 9 * j], [3 * i, 8 * j], [4 * i, 10 * j],
-                         [4 * i, 8 * j], [5 * i, 9 * j], [5 * i, 8 * j], [6 * i, 10 * j], [5 * i, 3 * j]])
-    if side == 1:
+                         [4 * i, 8 * j], [5 * i, 9 * j], [5 * i, 8 * j], [6 * i, 10 * j], [5 * i, 3 * j]])  # тело
+    if side == 1:  # лицо если смотрит налево
         pygame.draw.ellipse(place, (230, 0, 0, 200), (7 * i / 4, 2 * j, i / 2, j))
         pygame.draw.ellipse(place, (0, 0, 0, 200), (7 * i / 4, 2 * j, i / 2, j), 2)
         pygame.draw.ellipse(place, (230, 0, 0, 200), (11 * i / 4, 2 * j, i / 2, j))
@@ -23,6 +23,15 @@ def ghost(a, b, c, d, side):  # призрак side выбирает напра�
         pygame.draw.lines(place, (0, 0, 0, 200), False,
                           [[2 * i, 7 * j / 2], [2.25 * i, 4 * j], [2.5 * i, 3.75 * j], [2.75 * i, 4 * j],
                            [3 * i, 3.5 * j]], 2)
+    elif side == 0:  # лицо если смотрит направо
+        pygame.draw.ellipse(place, (230, 0, 0, 200), (i + 7 * i / 4, 2 * j, i / 2, j))
+        pygame.draw.ellipse(place, (0, 0, 0, 200), (i + 7 * i / 4, 2 * j, i / 2, j), 2)
+        pygame.draw.ellipse(place, (230, 0, 0, 200), (i + 11 * i / 4, 2 * j, i / 2, j))
+        pygame.draw.ellipse(place, (0, 0, 0, 200), (i + 11 * i / 4, 2 * j, i / 2, j), 2)
+        pygame.draw.lines(place, (0, 0, 0, 200), False,
+                          [[i + 2 * i, 7 * j / 2], [i + 2.25 * i, 4 * j], [i + 2.5 * i, 3.75 * j],
+                           [i + 2.75 * i, 4 * j],
+                           [i + 3 * i, 3.5 * j]], 2)
 
     screen.blit(place, (a, b))
 
@@ -63,8 +72,16 @@ cloud(50, 50, 50, 100, 50, 300, 60)
 cloud(40, 40, 40, 50, 100, 250, 50)
 cloud(80, 80, 80, 150, 20, 150, 50)
 cloud(70, 70, 70, 150, 150, 250, 50)
-house(50, 200, 200, 300)
-ghost(200, 300, 100, 200, 1)
+cloud(40, 40, 40, 20, 170, 180, 50)
+house(140, 150, 100, 140)
+house(10, 300, 170, 220)
+house(310, 180, 120, 160)
+ghost(30, 430, 90, 140, 0)
+ghost(190, 260, 80, 120, 0)
+ghost(150, 300, 80, 120, 1)
+ghost(250, 200, 40, 70, 1)
+ghost(100, 150, 40, 70, 0)
+ghost(200, 300, 400, 600, 1)
 pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
