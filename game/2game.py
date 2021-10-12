@@ -19,6 +19,9 @@ BLACK = (0, 0, 0)
 # создаем массив цветов, чтобы можно было рандомно их генерировать через их номера в массиве
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
+global score
+score = 0
+
 
 def new_ball():
     global x, y, r, color, speedX, speedY, existence
@@ -28,7 +31,7 @@ def new_ball():
     r = randint(30, 50)
     speedX = randint(-10, 10)
     speedY = randint(-10, 10)
-    color = COLORS[randint(0, 5)]
+    color = (randint(10, 255), randint(10, 255), randint(10, 255))
     pygame.draw.circle(screen, color, (x, y), r)
 
 
@@ -44,6 +47,7 @@ while not finished:
             (shootX, shootY) = event.pos
             if ((x - shootX) ** 2 + (y - shootY) ** 2 <= r ** 2):
                 existence = 0
+                score = score + 1
     if existence == 0:
         screen.fill(BLACK)
         new_ball()
@@ -61,6 +65,14 @@ while not finished:
         x = x + speedX
         y = y + speedY
         pygame.draw.circle(screen, color, (x, y), r)
+
+    font = pygame.font.Font(None, 20)
+    text1 = font.render("score", True, [255, 255, 255])
+    text1pos = (160, 10)
+    text2 = font.render(str(score), True, [255, 255, 255])
+    text2pos = (200, 10)
+    screen.blit(text1, text1pos)
+    screen.blit(text2, text2pos)
 
     pygame.display.update()
 
