@@ -67,6 +67,7 @@ def new_ball(number):
     color[number] = (randint(10, 255), randint(10, 255), randint(10, 255))  # случайный цвет, без черного
     pygame.draw.circle(screen, color[number], (x[number], y[number]), r[number])  # отрисовка шара
 
+
 def reflection(number):
     '''
     функция изменяет направления и значения скоростей при ударе шаров о стенку
@@ -82,6 +83,7 @@ def reflection(number):
     elif y[number] < r[number]:
         speedY[number] = randint(0, 10)
 
+
 def move(number):
     '''
     функция двигает (перерисовывает) шар на экране в соответствии с его скоростью
@@ -91,6 +93,7 @@ def move(number):
     x[number] = x[number] + speedX[number]
     y[number] = y[number] + speedY[number]
     pygame.draw.circle(screen, color[number], (x[number], y[number]), r[number])
+
 
 clock = pygame.time.Clock()
 finished = False
@@ -137,5 +140,62 @@ while not finished:
     screen.blit(text4, text4pos)
 
     pygame.display.update()
+
+
+def file_reading():
+    """
+    функция возвращает из файла два массива с именами игроков и их баллами.
+    """
+    points = [""] * 5
+    names = [""] * 5
+
+    f = open("hall of fame.txt", "r")
+    file = f.readlines()
+    for i in range(1, 6):
+        string = file[i]
+        pos = -1
+        while string[pos] != " ":
+            points[i - 1] = string[pos] + points[i - 1]
+            pos -= 1
+        pos = 3
+        while string[pos] != ",":
+            names[i - 1] = names[i - 1] + string[pos]
+            pos += 1
+    for i in range(5):
+        points[i] = points[i].replace("\n", "")
+
+    f.close()
+
+    return points, names
+
+
+def file_writing(points, names):
+    '''
+    функция записывает в файл новые результаты.
+    points это массив с результатами пяти лучших игроков.
+    names это массив с именами пяти лучших игроков.
+    '''
+    f = open("hall of fame.txt", "w")
+    f.write("Top players: \n")
+
+    i = 1
+    boolean = True
+    while i < 6 and boolean:
+        if score > int(points[i - 1]):
+            f.write(str(i) + ". " + username + ", score: " + str(score) + "\n")
+            boolean = False
+        else:
+            f.write(str(i) + ". " + names[i - 1] + ", score: " + points[i - 1] + "\n")
+        i += 1
+
+    if not boolean:
+        for j in range(i, 6):
+            f.write(str(j) + ". " + names[j - 2] + ", score: " + points[j - 2] + "\n")
+
+    f.close()
+
+
+points, names = file_reading()
+file_writing(points, names)
 
 pygame.quit()
