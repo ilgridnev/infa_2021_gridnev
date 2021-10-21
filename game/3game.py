@@ -32,68 +32,61 @@ score = 0
 global shots  # переменная отвечающая за количество выстрелов игрока
 shots = 6
 
-balllist = [0] * 6  # массив, отвечающий за наличие/отсутствие шаров на экране (1/0 соответственно)
-r = [0] * 6  # массив, отвечающий за хранение радиусов шаров
-x = [0] * 6  # массив, отвечающий за хранение х координаты шаров
-y = [0] * 6  # массив, отвечающий за хранение у коордирнаты шаров
-speedX = [0] * 6  # массив, отвечающий за хранение скорости по х координате шаров
-speedY = [0] * 6  # массив, отвечающий за хранение скорости по у координате шаров
-color = [0] * 6  # массив, отвечающий за хранение цветов шаров
+balls = []
 
 
-def existence(number, status):
-    '''
-    функция явно показывает изменение статуса существования шара
-    на вход принимает две переменные number, status
-    number номер шара
-    status новый статус
-    '''
+class Ball:
+    def __init__(self, number, existence, r, x, y, speedX, speedY, color):
+        global balls
+        balls.append(self)
+        self.number = number
+        self.existence = existence
+        self.r = r
+        self.x = x
+        self.y = y
+        self.speedX = speedX
+        self.speedY = speedY
+        self.color = color
 
-    balllist[number] = status
+    def reflection(self):
+        '''
+        функция изменяет направления и значения скоростей при ударе шаров о стенку
+        на вход принимает переменную number
+        number номер шара
+        '''
+        if self.x > 400 - self.r:
+            self.speedX = randint(-10, 0)
+        elif self.x < self.r:
+            self.speedX = randint(0, 10)
+        if self.y > 400 - self.r:
+            self.speedY = randint(-10, 0)
+        elif self.y < self.r:
+            self.speedY = randint(0, 10)
 
-
-def new_ball(number):
-    '''
-    функция создает новый шар на экране
-    на вход принимает переменную number
-    number номер шара
-    '''
-    existence(number, 1)  # объявляем существование
-    x[number] = randint(50, 350)  # случайная х координата
-    y[number] = randint(50, 350)  # случайная у координата
-    r[number] = randint(30, 50)  # случайный радиус
-    speedX[number] = randint(-10, 10)  # случайная скорость по х
-    speedY[number] = randint(-10, 10)  # случайная скорость по у
-    color[number] = (randint(10, 255), randint(10, 255), randint(10, 255))  # случайный цвет, без черного
-    pygame.draw.circle(screen, color[number], (x[number], y[number]), r[number])  # отрисовка шара
-
-
-def reflection(number):
-    '''
-    функция изменяет направления и значения скоростей при ударе шаров о стенку
-    на вход принимает переменную number
-    number номер шара
-    '''
-    if x[number] > 400 - r[number]:
-        speedX[number] = randint(-10, 0)
-    elif x[number] < r[number]:
-        speedX[number] = randint(0, 10)
-    if y[number] > 400 - r[number]:
-        speedY[number] = randint(-10, 0)
-    elif y[number] < r[number]:
-        speedY[number] = randint(0, 10)
+    def move(self):
+        '''
+        функция двигает (перерисовывает) шар на экране в соответствии с его скоростью
+        на вход принимает переменную number
+        number номер шара
+        '''
+        self.x += self.speedX
+        self.y += self.speedY
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 
-def move(number):
-    '''
-    функция двигает (перерисовывает) шар на экране в соответствии с его скоростью
-    на вход принимает переменную number
-    number номер шара
-    '''
-    x[number] = x[number] + speedX[number]
-    y[number] = y[number] + speedY[number]
-    pygame.draw.circle(screen, color[number], (x[number], y[number]), r[number])
+def generate_balls(n=6):
+    for i in range(n):
+        ball = Ball(1, 1, randint(30, 50),  # случайный радиус
+                    randint(50, 350),  # случайная х координата
+                    randint(50, 350),  # случайная y координата
+                    randint(-10, 10),  # случайная скорость по х
+                    randint(-10, 10),  # случайная скорость по y
+                    (randint(10, 255),  # случайный цвет
+                     randint(10, 255),
+                     randint(10, 255)))
 
+
+generate_balls()
 
 clock = pygame.time.Clock()
 finished = False
@@ -107,19 +100,27 @@ while not finished:
             if shots == 0:
                 finished = True
             (shootX, shootY) = event.pos
-            for number in range(6):
-                if ((x[number] - shootX) ** 2 + (y[number] - shootY) ** 2 <= r[number] ** 2):
-                    existence(number, 0)
+            for ball in balls:
+                if (ball.x - shootX) ** 2 + (ball.y - shootY) ** 2 <= ball.r ** 2:
+                    ball.existence = 0
                     score = score + 1
     screen.fill(BLACK)
-    for number in range(6):
-        if balllist[number] == 0:
-            new_ball(number)
-            existence(number, 1)
+    for i, ball in enumerate(balls):
+        if ball.existence == 0:
+            del balls[i]
+            ball = Ball(1, 1, randint(30, 50),  # случайный радиус
+                        randint(50, 350),  # случайная х координата
+                        randint(50, 350),  # случайная y координата
+                        randint(-10, 10),  # случайная скорость по х
+                        randint(-10, 10),  # случайная скорость по y
+                        (randint(10, 255),  # случайный цвет
+                         randint(10, 255),
+                         randint(10, 255)))
+            ball.existence = 1
 
-        reflection(number)
+        ball.reflection()
 
-        move(number)
+        ball.move()
 
     font = pygame.font.Font(None, 20)  # настраиваем шрифт для выведения надписей на экран
 
