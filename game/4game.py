@@ -195,7 +195,7 @@ def new_game(event=''):
 
         for b in balls:
             if b.live >= 0:
-                b.reflection()
+
 
                 b.move()
 
