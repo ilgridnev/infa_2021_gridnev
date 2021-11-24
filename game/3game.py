@@ -1,4 +1,6 @@
 # запрос данных об игроке, вывод правил игры на экран
+from typing import Any
+
 print("Hello player! \n"
       "Remember, you have only 6 shots, use them carefully\n"
       "please, enter your name ...")
@@ -32,7 +34,8 @@ score = 0
 global shots  # переменная отвечающая за количество выстрелов игрока
 shots = 6
 
-balls = []
+balls: Any = []
+snitches: Any = []
 
 
 class Ball:
@@ -86,6 +89,58 @@ def generate_balls(n=6):
                      randint(10, 255)))
 
 
+class Snitch:
+    def __init__(self, number, existence, r, x, y, speedX, speedY, color):
+        global snitches
+        snitches.append(self)
+        self.number = number
+        self.existence = existence
+        self.r = r
+        self.x = x
+        self.y = y
+        self.speedX = speedX
+        self.speedY = speedY
+        self.color = color
+
+    def reflection(self):
+        '''
+        функция изменяет направления и значения скоростей при ударе шаров о стенку
+        на вход принимает переменную number
+        number номер шара
+        '''
+        if self.x > 400 - self.r:
+            self.speedX = randint(-10, 0)
+        elif self.x < self.r:
+            self.speedX = randint(0, 10)
+        if self.y > 400 - self.r:
+            self.speedY = randint(-10, 0)
+        elif self.y < self.r:
+            self.speedY = randint(0, 10)
+
+    def move(self):
+        '''
+        функция двигает (перерисовывает) шар на экране в соответствии с его скоростью
+        на вход принимает переменную number
+        number номер шара
+        '''
+        self.x += self.speedX
+        self.y += self.speedY
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+
+
+def generate_snitch(n=6):
+    for i in range(n):
+        snitch = Snitch(1, 1, 20,  # маленький радиус
+                        randint(50, 350),  # случайная х координата
+                        randint(50, 350),  # случайная y координата
+                        randint(-10, 10),  # случайная скорость по х
+                        randint(-10, 10),  # случайная скорость по y
+                        (255,  # белый цвет
+                         255,
+                         255))
+
+
+generate_snitch()
 generate_balls()
 
 clock = pygame.time.Clock()
@@ -97,6 +152,7 @@ while not finished:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             shots = shots - 1
+
             if shots == 0:
                 finished = True
             (shootX, shootY) = event.pos
@@ -104,6 +160,11 @@ while not finished:
                 if (ball.x - shootX) ** 2 + (ball.y - shootY) ** 2 <= ball.r ** 2:
                     ball.existence = 0
                     score = score + 1
+
+            for snitch in snitches:
+                if (snitch.x - shootX) ** 2 + (snitch.y - shootY) ** 2 <= snitch.r ** 2:
+                    snitch.existence = 0
+                    shots = shots + 2
     screen.fill(BLACK)
     for i, ball in enumerate(balls):
         if ball.existence == 0:
@@ -121,6 +182,13 @@ while not finished:
         ball.reflection()
 
         ball.move()
+    for i, snitch in enumerate(snitches):
+        if snitch.existence == 0:
+            del snitches[i]
+
+        snitch.reflection()
+
+        snitch.move()
 
     font = pygame.font.Font(None, 20)  # настраиваем шрифт для выведения надписей на экран
 
