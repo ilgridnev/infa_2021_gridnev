@@ -135,9 +135,7 @@ def generate_snitch(n=6):
                         randint(50, 350),  # случайная y координата
                         randint(-10, 10),  # случайная скорость по х
                         randint(-10, 10),  # случайная скорость по y
-                        (255,  # белый цвет
-                         255,
-                         255))
+                        (255, 255, 255))   # белый цвет
 
 
 generate_snitch()
@@ -182,6 +180,7 @@ while not finished:
         ball.reflection()
 
         ball.move()
+
     for i, snitch in enumerate(snitches):
         if snitch.existence == 0:
             del snitches[i]
